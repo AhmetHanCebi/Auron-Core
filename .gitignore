@@ -1,0 +1,6 @@
+node_modules/
+temp/
+*.log
+.env
+.DS_Store
+_temp_command_prompt.txt
