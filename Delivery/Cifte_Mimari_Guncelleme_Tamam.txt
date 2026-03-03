@@ -1,0 +1,35 @@
+============================================================
+AURON-CORE ÇİFTE MİMARİ GÜNCELLEME RAPORU
+Tarih: 2026-03-03
+Durum: TAMAMLANDI ✓
+============================================================
+
+1. SİMÜLATÖR ZIRHI (JSON FIX) ✓
+   Dosya: Cognitive_Tools/Future_Simulator.js → runSimulation()
+
+   Yapılan Değişiklik:
+   - LLM'den dönen ham çıktı artık 3 aşamalı regex zırhından geçiriliyor:
+     Adım 1: ```json ... ``` kod bloğu etiketleri soyuluyor
+     Adım 2: <cortex>/<json> gibi XML etiketleri temizleniyor
+     Adım 3: Fallback olarak ilk { ve son } arasındaki saf JSON çıkarılıyor
+   - Bu sayede LLM hangi formatta cevap verirse versin (saf JSON, code block,
+     XML sarmalı) parse işlemi başarılı olacak.
+   - main.js'deki cortex tag temizleme stratejisiyle tam uyumlu.
+
+2. AKILLI YOL AYRIMI (ROUTER) ✓
+   Dosya: main.js → runAuron() → systemPrompt (her iki döngü)
+
+   Yapılan Değişiklik:
+   - Ana sistem prompt'una (1. döngü) ve derin analiz sonrası prompt'una
+     (2. döngü) "AKILLI YOL AYRIMI" kuralı eklendi.
+   - Kural özeti:
+     → Kişisel konu (boks, diyet, kariyer vb.) → Sadece Auron_Strateji_Analizi.md
+       (yaşam koçluğu/strateji raporu). plan.md ve teknik SCAMPER YASAK.
+     → Yazılım/uygulama fikri → plan.md + teknik SCAMPER üretilir (mevcut akış).
+   - Her iki döngüde de tutarlı şekilde uygulanıyor.
+
+============================================================
+SONUÇ: Her iki mimari güncelleme başarıyla tamamlandı.
+Auron artık hem JSON parse hatalarına karşı zırhlı,
+hem de konu tipine göre akıllı yönlendirme yapabiliyor.
+============================================================

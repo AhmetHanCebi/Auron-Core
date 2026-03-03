@@ -1,0 +1,8 @@
+{
+  "name": "auron-core",
+  "version": "1.0.0",
+  "description": "Cortex OS Strategic Mastermind",
+  "scripts": {
+    "start": "node main.js"
+  }
+}

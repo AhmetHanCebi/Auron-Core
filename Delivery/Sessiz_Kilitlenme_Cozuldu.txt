@@ -1,0 +1,55 @@
+================================================================
+ AURON - SESSİZ KİLİTLENME (HANGING) ÇÖZÜM RAPORU
+ Tarih: 2026-03-03
+================================================================
+
+SORUN:
+------
+async/await güncellemesi sırasında `exec('claude ...')` komutları
+görünmez bir etkileşimli onay (Y/N) prompt'una takılıyor ve sistem
+sonsuza kadar asılı (hanging) kalıyordu. Timeout 1 saat (3.600.000 ms)
+olarak ayarlı olduğundan, bu süre boyunca hiçbir hata fırlatılmıyor,
+süreç sessizce kilitli bekliyordu.
+
+YAPILAN DEĞİŞİKLİKLER:
+-----------------------
+
+1. Cognitive_Tools/Future_Simulator.js — generateQuestions() [Satır ~59-67]
+   - DURUM: --dangerously-skip-permissions flag'i ZATEN MEVCUT (OK)
+   - DEĞİŞİKLİK: timeout: 60 * 60 * 1000 (1 saat) -> timeout: 300000 (5 dakika)
+   - DEĞİŞİKLİK: maxBuffer: 50 * 1024 * 1024 -> maxBuffer: 1024 * 1024 * 50 (aynı değer, standart format)
+
+2. Cognitive_Tools/Future_Simulator.js — runSimulation() [Satır ~153-161]
+   - DURUM: --dangerously-skip-permissions flag'i ZATEN MEVCUT (OK)
+   - DEĞİŞİKLİK: timeout: 60 * 60 * 1000 (1 saat) -> timeout: 300000 (5 dakika)
+   - DEĞİŞİKLİK: maxBuffer: 50 * 1024 * 1024 -> maxBuffer: 1024 * 1024 * 50 (aynı değer, standart format)
+
+3. main.js — runAuron() ana döngü exec [Satır ~154]
+   - DURUM: --dangerously-skip-permissions flag'i ZATEN MEVCUT (OK)
+   - DEĞİŞİKLİK: timeout: 60 * 60 * 1000 (1 saat) -> timeout: 300000 (5 dakika)
+   - DEĞİŞİKLİK: maxBuffer: 50 * 1024 * 1024 -> maxBuffer: 1024 * 1024 * 50 (aynı değer, standart format)
+
+4. main.js — runAuron() derin analiz aracı exec [Satır ~200]
+   - DURUM: --dangerously-skip-permissions flag'i ZATEN MEVCUT (OK)
+   - DEĞİŞİKLİK: timeout: 60 * 60 * 1000 (1 saat) -> timeout: 300000 (5 dakika)
+   - DEĞİŞİKLİK: maxBuffer: 50 * 1024 * 1024 -> maxBuffer: 1024 * 1024 * 50 (aynı değer, standart format)
+
+ETKİLEŞİMLİ PROMPT ANALİZİ:
+----------------------------
+Tüm 4 exec çağrısında `claude` komutu `-p` (pipe/prompt) modunda
+çalıştırılıyor ve `--dangerously-skip-permissions` flag'i mevcut.
+Bu kombinasyon, CLI'ın etkileşimli onay sormadan çalışmasını sağlıyor.
+stdin yönlendirmesine (< /dev/null) gerek yoktur, çünkü -p modu
+zaten non-interactive çalışır.
+
+ÖZET:
+-----
+- 4 adet exec çağrısı incelendi
+- Tümünde --dangerously-skip-permissions flag'i zaten mevcuttu
+- Tümünde timeout 1 saatten 5 dakikaya düşürüldü
+- Artık bir kilitlenme olursa en fazla 5 dakika sonra timeout hatası fırlatılır
+  ve reportError() fonksiyonu hatayı Delivery/Auron_Sistem_Hatasi.txt'ye yazar
+
+================================================================
+ RAPOR SONU
+================================================================

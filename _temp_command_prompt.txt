@@ -1,0 +1,10 @@
+Commit edilmemiş değişiklikler ve yeni dosyalar var. Bunları önce commit edip sonra push etmem gerekiyor.
+
+Mevcut değişiklikler:
+- Değişen dosyalar: Cognitive_Tools/Future_Simulator.js, main.js, topic.txt
+- Yeni dosyalar: Auron-Core/, Delivery/, _question_prompt_temp.txt, modules/, package.json
+
+Bunları commit edip push etmemi onaylıyor musun? _temp_command_prompt.txt ve _question_prompt_temp.txt gibi geçici dosyaları dahil etmeyeyim mi, yoksa hepsini mi ekleyeyim?
+
+
+Onaylıyorum. Evet hepsini pushlayabilirsin

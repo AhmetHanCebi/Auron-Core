@@ -1,0 +1,22 @@
+TELEGRAM DOSYA YAKALAYICI - AKTIVASYON RAPORU
+=============================================
+Tarih: 2026-03-03
+Durum: AKTIF
+
+YAPILAN ISLEM:
+- modules/document_handler.js dosyasina "answers.txt" yakalama blogu eklendi.
+- Bot, Telegram'dan yuklenen "answers.txt" dosyasini otomatik olarak aktif projenin
+  Auron-Core/ dizinine indirir ve uzerine yazar.
+- Basarili indirmede kullaniciya onay mesaji gonderilir.
+- Hata durumunda try/catch ile hata mesaji dondurulur.
+
+TETIKLEME KOSULU:
+- Kullanici Telegram'dan "answers.txt" adinda bir dosya yukledigi anda tetiklenir.
+
+HEDEF DIZIN:
+- {aktifProje}/Auron-Core/answers.txt
+
+KULLANICI MESAJI (Basari):
+"answers.txt havada yakalandi ve Auron'un zihnine yuklendi! Simulasyonu baslatmak icin /auron yazabilirsiniz."
+
+SONUC: Sistem uretim ortamina hazir.

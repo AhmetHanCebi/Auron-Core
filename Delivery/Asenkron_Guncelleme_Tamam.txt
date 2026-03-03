@@ -1,0 +1,57 @@
+================================================================
+  AURON-CORE ASENKRON REFACTOR RAPORU
+  Tarih: 2026-03-03
+  Durum: TAMAMLANDI
+================================================================
+
+YAPILAN DEGISIKLIKLER:
+
+1. Cognitive_Tools/Future_Simulator.js
+   -----------------------------------------------
+   [ONCE]  const { execSync } = require('child_process');
+   [SONRA] const util = require('util');
+           const exec = util.promisify(require('child_process').exec);
+
+   - generateQuestions() -> async function generateQuestions()
+     * execSync(...) -> const { stdout } = await exec(...)
+     * try/catch blogu mevcut (korundu)
+
+   - runSimulation() -> async function runSimulation()
+     * execSync(...) -> const { stdout } = await exec(...)
+     * try/catch blogu mevcut (korundu)
+
+   - saveToVault() degistirilmedi (dis cagri yapmadigi icin senkron kaldi)
+   - module.exports: generateQuestions ve runSimulation artik Promise donuyor
+
+2. main.js
+   -----------------------------------------------
+   [ONCE]  const { execSync } = require('child_process');
+   [SONRA] const util = require('util');
+           const exec = util.promisify(require('child_process').exec);
+
+   - checkpointPhase() -> async function checkpointPhase()
+     * await generateQuestions(topic) - try/catch icinde
+     * await runSimulation(answersText) - try/catch icinde
+
+   - runAuron() -> async function runAuron(userIdea)
+     * Tum execSync cagrilari -> await exec(...) ile degistirildi
+     * Her await exec blogu try/catch icinde
+
+   - Ust seviye calisma: async IIFE ile sarmalandi
+     * (async () => { ... })().catch(err => { ... })
+
+   - module.exports = { runAuron }; eklendi
+     * Telegram botu veya diger sistemler runAuron()'u await ile cagirabilir
+     * Fonksiyon Promise donuyor
+
+KRITIK NOTLAR:
+   - Ana thread artik BLOKLANMIYOR
+   - Tum Claude CLI cagrilari non-blocking (async)
+   - maxBuffer: 50MB korundu (buyuk ciktilara karsi)
+   - timeout: 1 saat korundu
+   - Hata durumlarinda sistem cokmez, try/catch ile yakalanir
+
+================================================================
+  SONUC: Sistem tamamen asenkron yapiya gecti.
+  Ana thread donma problemi cozuldu.
+================================================================

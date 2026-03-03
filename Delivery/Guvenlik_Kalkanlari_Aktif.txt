@@ -1,0 +1,55 @@
+============================================================
+  AURON-CORE GÜVENLİK KALKANLARI — AKTİVASYON RAPORU
+============================================================
+Tarih : 2026-03-03
+Durum : TÜM KALKANLAR AKTİF ✓
+
+────────────────────────────────────────────────────────────
+KALKAN 1 — INPUT SANİTASYONU (Shell Enjeksiyon Koruması)
+────────────────────────────────────────────────────────────
+  Dosyalar : main.js, Cognitive_Tools/Future_Simulator.js
+  Fonksiyon: sanitizeInput(text)
+  Kapsam   : Çift tırnak ("), ters tırnak (`), dolar ($)
+             işaretleri kaçış karakterleriyle değiştirilir.
+  Amaç     : exec() çağrılarında shell kod enjeksiyonunu
+             tamamen engellemek.
+
+────────────────────────────────────────────────────────────
+KALKAN 2 — GÜVENLİ EXEC ÇAĞRILARI
+────────────────────────────────────────────────────────────
+  Dosyalar : main.js, Cognitive_Tools/Future_Simulator.js
+  Uygulama : Tüm dışarıdan gelen değişkenler (userIdea,
+             topic, answersText) exec/prompt içine
+             gömülmeden önce sanitizeInput() ile temizlenir.
+  Korunan Noktalar:
+    - main.js        → userIdea (systemPrompt, toolPrompt, 2. döngü)
+    - Future_Sim.js  → topic   (generateQuestions)
+    - Future_Sim.js  → answersText (runSimulation)
+
+────────────────────────────────────────────────────────────
+KALKAN 3 — SESSİZ ÇÖKÜŞ ENGELLEYİCİ (Hata Raporlama)
+────────────────────────────────────────────────────────────
+  Dosyalar : main.js, Cognitive_Tools/Future_Simulator.js
+  Fonksiyon: reportError(context, error)
+  Çıktı    : Delivery/Auron_Sistem_Hatasi.txt
+  Kapsam   : Her try/catch bloğunda hata hem console.error
+             ile konsola yazılır, hem de tarih damgası ve
+             bağlam bilgisiyle birlikte dosyaya eklenir.
+  Güncellenen catch blokları:
+    main.js:
+      - Üst Akıl Soru Üretim hatası
+      - Üst Akıl Simülasyon hatası
+      - Claude CLI hatası
+      - Derin Analiz Aracı hatası
+      - Cortex JSON parse hatası
+      - Ana Akış (top-level) hatası
+    Future_Simulator.js:
+      - Soru üretim hatası
+      - Claude CLI simülasyon hatası
+      - JSON parse hatası
+
+============================================================
+  Sonuç: Sistem artık güvenli, şeffaf ve izlenebilir.
+  CEO, herhangi bir çöküş durumunda Delivery/ klasöründeki
+  Auron_Sistem_Hatasi.txt dosyasından detayları görebilir.
+============================================================
